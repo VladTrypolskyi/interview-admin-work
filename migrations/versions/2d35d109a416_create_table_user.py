@@ -19,7 +19,8 @@ depends_on = None
 def upgrade():
     op.create_table(
         'User',
-        sa.Column('user_login', sa.String(100), unique=True, primary_key=True),
+        sa.Column('user_id', sa.Integer, primary_key=True, unique=True),
+        sa.Column('user_login', sa.String(100), unique=True),
         sa.Column('role_id', sa.Integer(), unique=True),
         sa.ForeignKeyConstraint(['role_id'], ['Role.role_id'], name='role_role_id', ondelete='CASCADE'),
         sa.Column('name', sa.String(100), nullable=False),

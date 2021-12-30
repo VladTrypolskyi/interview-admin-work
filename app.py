@@ -5,31 +5,16 @@ from forms import UserForm, QuestionsForm, UserInterviewForm, InterviewForm, Int
 from models import app, db
 
 
-# @app.route('/')
-# def root():
-#     return redirect('/login')
-#
-#
-# @app.route('/home')
-# # @login_required
-# def home():
-#     role = 'user'
-#     if role == 'admin':  # это хардкод
-#         return "hello admin"
-#     elif role == 'user':
-#         return "hello user"
-#     else:
-#         return redirect('/login')
 @app.route('/')
 @app.route('/users')
-@login_required
+# @login_required
 def all_user():
     query = User.query.all()
     return render_template('index.html', query=query)
 
 
 @app.route('/add-user', methods=["GET", "POST"])
-@login_required
+# @login_required
 def add_user():
     form = UserForm()
     if form.validate_on_submit():
@@ -46,14 +31,14 @@ def add_user():
 
 
 @app.route('/questions')
-@login_required
+# @login_required
 def questions():
     query = Questions.query.all()
     return render_template('index.html', query=query)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
-@login_required
+# @login_required
 def add_question():
     form = QuestionsForm()
     if form.validate_on_submit():
@@ -66,14 +51,14 @@ def add_question():
 
 
 @app.route('/interviews')
-@login_required
+# @login_required
 def interviews():
     query = Interview.query.all()
     return render_template('index.html', query=query)
 
 
 @app.route('/add-interview', methods=["GET", "POST"])
-@login_required
+# @login_required
 def add_interview():
     form = InterviewForm().new()
     if form.validate_on_submit():
@@ -87,17 +72,8 @@ def add_interview():
             interviewers.append(user)
         interview = Interview(candidate_name=form.candidate_name.data,
                               question_list=question_list,
-                              interviewers=interviewers,
                               )
-        all = [interview]
-        for user in interviewers:
-            for question in question_list:
-                grade = total_mark(
-                    question=question,
-                    interviewer=user,
-                    interview=interview
-                )
-                all.append(grade)
+
         db.session.add_all(all)
         db.session.commit()
         return redirect('/add-interview')
@@ -120,24 +96,6 @@ def login():
     return render_template("form.html", form=form)
 
 
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if request.method == 'POST':
-#         user = User.query.filter_by(username=request.form['username']).first()
-#         return redirect('/home')
-#         if not user or not check_password_hash(user.password, password):
-#             flash('Please check your login details and try again.')
-#             return redirect(url_for('login'))
-#         # print(request.form['psw'])
-#         # user = User.query.filter_by(username=request.form['username']).first()
-#         # проверяем аутентификацию
-#         # if user.password_hash == request.form['psw']:
-#         #     return redirect('/home')
-#         # else:
-#         #     return redirect('/login')
-#     return render_template('login.html')
-
-
 @app.route('/registration', methods=['GET', 'POST'])
 # @login_required
 def registration():
@@ -147,12 +105,6 @@ def registration():
         user_role = Role.query.filter_by(name='user').first()
         user = User(name=request.form['name'], surname=request.form['surname'],
                     password=request.form['psw'])
-        # role=user_role)
-        # if User.password_hash==False:
-
-        # hash = generate_password_hash(request.form['psw'])
-        # else:
-        #     render_template("registration.html")
         db.session.add(user)
         db.session.commit()
         return redirect('/home')

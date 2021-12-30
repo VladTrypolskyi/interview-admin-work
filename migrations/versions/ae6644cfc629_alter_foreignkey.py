@@ -16,11 +16,13 @@ depends_on = None
 
 
 def upgrade():
-    op.create_foreign_key('fk_question_id', 'Interview', 'User_interview', ['interview_id'], ['interview_id'])
-    op.create_foreign_key('fk_interview_question_question_id', 'Questions', 'Interview_questions', ['question_id'],
-                          ['question_id'])
+    pass
+    # op.create_foreign_key('fk_question_id', 'Interview', 'User_interview', ['interview_id'], ['interview_id'])
+    # op.create_foreign_key('fk_interview_question_question_id', 'Questions', 'Interview_questions', ['question_id'],
+    #                       ['question_id'])
 
 
 def downgrade():
-    op.drop_constraint('fk_question_id', 'Interview', type_='foreignkey')
-    op.drop_constraint('fk_interview_question_question_id', 'Questions', type_='foreignkey')
+    pass
+    # op.drop_constraint('fk_question_id', 'Interview', type_='foreignkey')
+    # op.drop_constraint('fk_interview_question_question_id', 'Questions', type_='foreignkey')

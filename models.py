@@ -22,22 +22,23 @@ class Role(db.Model):
     __tablename__ = 'Role'
 
     role_id = db.Column(db.Integer, unique=True, primary_key=True)
-    name = db.Column(db.String(64), nullable=False, unique=True)
-    # users = db.relationship('User', backref='Role')
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    role_ids = db.relationship('User', backref='Role')
 
     def __repr__(self):
-        return '<Role id={} name={}>'.format(self.role_id, self.name)
+        return self.name
 
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     __tablename__ = 'User'
 
-    # user_login = db.Column(db.Integer, primary_key=True) # string
-    name = db.Column(db.String(100), index=True, unique=True, )
+    user_id = db.Column(db.Integer, primary_key=True, unique=True)
+    user_login = db.Column(db.String(200), unique=True)
+    name = db.Column(db.String(100), index=True, unique=True)
     surname = db.Column(db.String(100))
-    password = db.Column(db.String(255))  # passwodr_hash?
-    role_id = db.Column(db.Integer, db.ForeignKey('Role.role_id'), unique=True, primary_key=True) # primary_key
-    # role = db.relationship('Role', backref='User')  # ??
+    password = db.Column(db.String(255))
+    role_id = db.Column(db.Integer, db.ForeignKey('Role.role_id'), unique=True, primary_key=True)
+    user_logins = db.relationship('UserInterview')
 
     def __repr__(self):
         return '<User {}:{}>'.format(self.name, self.surname)
@@ -46,7 +47,6 @@ class User(db.Model, UserMixin):
         self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        # return self.password_hash
         return check_password_hash(self.password_hash, password)
 
     @staticmethod
@@ -71,6 +71,7 @@ class Interview(db.Model):
     link_zoom = db.Column(db.String())
     total_mark = db.Column(db.Float(precision=2), default=0)
     interview_ids = db.relationship('UserInterview', backref='Interview')
+    interview_ids_1 = db.relationship('InterviewQuestions', backref='Interview')
 
     def __repr__(self):
         return f'{self.candidate_name}, {self.candidate_surname}'
@@ -81,10 +82,8 @@ class UserInterview(db.Model):
 
     user_interview_id = db.Column(db.Integer(), primary_key=True)
     user_login = db.Column(db.String(), db.ForeignKey('User.user_login'), unique=True)
-    interview_id = db.Column(db.Integer(), db.ForeignKey('Interview.interview.id'), unique=True, nullable=False)
+    interview_id = db.Column(db.Integer(), db.ForeignKey('Interview.interview_id'), unique=True, nullable=False)
     user_comments = db.Column(db.String(255))
-
-    # user = db.relationship('User', backref=db.backref('user_interview.id', cascade='all,delete'))
 
     def __repr__(self):
         return '<UserInterview %r>' % self.id
@@ -94,13 +93,10 @@ class InterviewQuestions(db.Model):
     __tablename__ = 'Interview_questions'
 
     interview_question_id = db.Column(db.Integer(), primary_key=True)
-    interview_id = db.Column(db.Integer(), db.ForeignKey('Interview.interview.id'), unique=True, nullable=False)
-    question_id = db.Column(db.Integer(), db.ForeignKey('Questions.question.id'), unique=True, nullable=False)
+    interview_id = db.Column(db.Integer(), db.ForeignKey('Interview.interview_id'), unique=True, nullable=False)
+    question_id = db.Column(db.Integer(), db.ForeignKey('Questions.question_id'), unique=True, nullable=False)
     answer = db.Column(db.String(255))
     user_mark = db.Column(db.Float(), nullable=False, default=0)
-
-    # interviewer = db.relationship('User',
-    #                                backref=db.backref('interviewQuestions.interview_question_id', cascade='all,delete'))
 
     def __repr__(self):
         return f'{self.interview_id}, {self.intrerviewer}'
@@ -113,15 +109,16 @@ class Questions(db.Model):
     question = db.Column(db.String(255))
     course = db.Column(db.String(255))
     kind_of_question = db.Column(db.String(255), nullable=False)
+    question_ids = db.relationship('InterviewQuestions', backref='Questions')
 
     def __repr__(self):
-        return 'Question %r' % self.id
+        return 'Question_id %r' % self.id
 
     @staticmethod
     def get_selection_list():
         result = []
         for i in Questions.query.all():
-            result.append((f"{i.id}", f"{i.kind_of_question}"))
+            result.append((f"{i.question_id}", f"{i.kind_of_question}"))
         return result
 
 

@@ -21,7 +21,7 @@ def upgrade():
         'User_interview',
         sa.Column('user_interview_id', sa.Integer(), primary_key=True),
         sa.Column('user_login', sa.String(), unique=True),
-        sa.ForeignKeyConstraint(['user_login'], ['User.user_login'], name='user_user_login', ondelete='CASCADE'),
+        # sa.ForeignKeyConstraint(['user_login'], ['User.user_login'], name='user_user_login', ondelete='CASCADE'),
         sa.Column('user_comments', sa.String(255)),
         sa.Column('interview_id', sa.Integer(), unique=True, nullable=False),
     )

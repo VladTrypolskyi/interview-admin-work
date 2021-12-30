@@ -27,5 +27,5 @@ def upgrade():
 
 
 def downgrade():
-    op.drop_table('questions')
+    op.drop_table('Questions')
 
